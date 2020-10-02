@@ -4,31 +4,33 @@ services:
 
     mailhog:
       image: mailhog/mailhog:latest
-      container_name: birdboard-mailhog
+      container_name: parkcharge-mailhog
       ports:
         - "8001:8025"
 
     redis:
       image: redis:alpine
-      container_name: birdboard-redis
+      container_name: parrkcharge-redis
 
     mysql:
-      image: mysql:8.0
-      container_name: birdboard-mysql
+      image: mysql:5.7.22
+      container_name: parkcharge-mysql
       working_dir: /application
+      restart: unless-stopped
+      tty: true
       volumes:
         - .:/application
       environment:
-        - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_DATABASE=birdboard
-        - MYSQL_USER=root
-        - MYSQL_PASSWORD=root
+        MYSQL_DATABASE: parkcharge
+        MYSQL_ROOT_PASSWORD: root
+        SERVICE_TAGS: dev
+        SERVICE_NAME: mysql
       ports:
-        - "3006:3306" 
+        - "3306:3306"
 
     webserver:
       image: nginx:alpine
-      container_name: birdboard-webserver
+      container_name: parkcharge-webserver
       working_dir: /application
       volumes:
           - .:/application
@@ -38,7 +40,7 @@ services:
 
     php-fpm:
       build: phpdocker/php-fpm
-      container_name: birdboard-php-fpm
+      container_name: parkcharge-php-fpm
       working_dir: /application
       volumes:
         - .:/application
